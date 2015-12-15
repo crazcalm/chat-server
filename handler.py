@@ -1,5 +1,30 @@
 from gi.repository import Gtk
 
+import asyncio 
+
+class ClientProtocol(asyncio.Protocol):
+    def __init__(self, text_buf, loop):
+        self.text_buf = text_buf
+        self.loop = loop
+        self.trasport = None
+
+    def connection_made(self, transport):
+        self.transport = transport
+
+    def data_received(self, data):
+        iter_end = self.text_buf.get_end_iter()
+        self.text_buf.insert(iter_end, "\n{}".format(data.decode()))
+
+    def connection_lost(self, exc):
+        iter_end = self.text_buf.get_end_iter()
+        self.text_buf.insert(iter_end, "\n disconnected")
+        self.transport = None
+
+
+    def send_msg(self, message):
+        self.transport.write(message.encode())
+
+
 class Handler:
     def __init__(self, text_entry, text_box):
         self.text_entry = text_entry
@@ -8,7 +33,14 @@ class Handler:
 
     def connect_button_clicked(self, widget):
         print("connect button clicked")
-        print(self)
+        loop = asyncio.get_event_loop()
+        coro = loop.create_connection(lambda: ClientProtocol(
+                self.text_buf, loop), '127.0.0.1', 3333)
+
+        self.transport, self.protocol = loop.run_until_complete(coro)
+        loop.run_forever()
+        #loop.close()
+
 
     def disconnect_button_clicked(self, widget):
         print("disconnect button clicked")
@@ -19,7 +51,7 @@ class Handler:
         print("sending")
         text = self.text_entry.get_text()
         end_iter = self.text_buf.get_end_iter()
-        self.text_buf.insert(end_iter, text)
+        self.transport.write(text.encode())
 
 
 builder = Gtk.Builder()
