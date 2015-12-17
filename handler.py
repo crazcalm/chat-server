@@ -1,6 +1,19 @@
 from gi.repository import Gtk
 
 import asyncio 
+import threading
+
+
+class ThreadLoop(threading.Thread):
+    def __init__(self, loop):
+        threading.Thread.__init__(self)
+        self.loop = loop
+        
+    def run(self):
+        print("starting Thread")
+        self.loop.run_forever()
+        print("Ending Thread")
+
 
 class ClientProtocol(asyncio.Protocol):
     def __init__(self, text_buf, loop):
@@ -18,8 +31,11 @@ class ClientProtocol(asyncio.Protocol):
     def connection_lost(self, exc):
         iter_end = self.text_buf.get_end_iter()
         self.text_buf.insert(iter_end, "\n disconnected")
-        self.transport = None
-
+        self.transport.close()
+        print("transport has closed")
+        print(dir(self.loop))
+        print("self.loop.stop()")
+        print(self.loop.stop())
 
     def send_msg(self, message):
         self.transport.write(message.encode())
@@ -33,25 +49,27 @@ class Handler:
 
     def connect_button_clicked(self, widget):
         print("connect button clicked")
-        loop = asyncio.get_event_loop()
-        coro = loop.create_connection(lambda: ClientProtocol(
-                self.text_buf, loop), '127.0.0.1', 3333)
+        self.loop = asyncio.get_event_loop()
+        coro = self.loop.create_connection(lambda: ClientProtocol(
+                self.text_buf, self.loop), '127.0.0.1', 3333)
 
-        self.transport, self.protocol = loop.run_until_complete(coro)
-        loop.run_forever()
-        #loop.close()
-
+        self.transport, self.protocol = self.loop.run_until_complete(coro)
+        self.thread = ThreadLoop(self.loop)
+        self.thread.start()
 
     def disconnect_button_clicked(self, widget):
-        print("disconnect button clicked")
-        print("Quiting app")
-        Gtk.main_quit()
+        print("this button does nothing")
 
     def send_button_clicked(self, widget):
         print("sending")
         text = self.text_entry.get_text()
         end_iter = self.text_buf.get_end_iter()
-        self.transport.write(text.encode())
+        if self.loop.is_running():
+            print("loop is running")
+            self.transport.write(text.encode())
+        else:
+            print("loop is not running")
+            self.tranport = None
 
 
 builder = Gtk.Builder()
@@ -64,13 +82,6 @@ text_entry = builder.get_object("text_entry")
 text_box = builder.get_object("textbox")
 
 builder.connect_signals(Handler(text_entry, text_box))
-
-
-# testing
-#print("dir(Builder) : {}".format(dir(builder)))
-
-print("dir(text_entry): {}".format(dir(text_entry)))
-text_entry.insert_text("Testing this out", 0)
 
 window.show_all()
 

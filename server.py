@@ -11,11 +11,16 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         clients.append(self)
 
     def data_received(self, data):
-        print("data_received: {}".format(data.decode()))
+        msg = data.decode()
+        print("data_received: {}".format(msg))
+
+                
+        if msg.strip() == "/quit":
+            self.transport.close()
+
         for client in clients:
-            if client is not self:
-                client.transport.write("{}: {}".format(self.peername, 
-                    data.decode()).encode())
+            client.transport.write("{}: {}".format(self.peername, 
+                data.decode()).encode())
 
     def connection_lost(self, ex):
         print("connection_lost: {}".format(self.peername))
