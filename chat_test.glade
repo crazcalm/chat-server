@@ -168,12 +168,17 @@
         </child>
         <child>
           <object class="GtkTextView" id="textbox">
+            <property name="width_request">100</property>
+            <property name="height_request">150</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="input_purpose">alpha</property>
+            <property name="editable">False</property>
+            <property name="wrap_mode">word</property>
+            <property name="cursor_visible">False</property>
+            <property name="input_purpose">digits</property>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
@@ -198,21 +203,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="disconnect_button">
-                <property name="label" translatable="yes">Disconnect</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <signal name="clicked" handler="disconnect_button_clicked" swapped="no"/>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">1</property>
-                <property name="width">1</property>
-                <property name="height">1</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkButton" id="send_button">
                 <property name="label" translatable="yes">Send</property>
                 <property name="visible">True</property>
@@ -222,7 +212,7 @@
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">2</property>
+                <property name="top_attach">1</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>
@@ -234,7 +224,7 @@
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">3</property>
+                <property name="top_attach">2</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>

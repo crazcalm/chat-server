@@ -57,9 +57,6 @@ class Handler:
         self.thread = ThreadLoop(self.loop)
         self.thread.start()
 
-    def disconnect_button_clicked(self, widget):
-        print("this button does nothing")
-
     def send_button_clicked(self, widget):
         print("sending")
         text = self.text_entry.get_text()
