@@ -1,4 +1,5 @@
 import asyncio
+import argparse
 
 
 clients = []
@@ -26,7 +27,34 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         print("connection_lost: {}".format(self.peername))
         clients.remove(self)
 
-if __name__ == '__main__':
+def cli_parser():
+    # logic for argparse
+    chat_server = argparse.ArgumentParser(
+        description="testing description",
+        epilog="Tesing epilog")
+
+    chat_server.add_argument(
+        "--ip",
+        type=str,
+        default="localhost",
+        help="IP Address?")
+
+    chat_server.add_argument(
+        "--port",
+        type=int,
+        default=3333,
+        help="The port the app will use?")
+
+    chat_server.add_argument(
+        "--name",
+        type=str,
+        default="Chat Room",
+        help="Names the chat room")
+
+    return chat_server
+
+def run_server():
+    # runs the server
     print("starting up..")
 
     loop = asyncio.get_event_loop()
@@ -38,3 +66,12 @@ if __name__ == '__main__':
         print("serving on {}".format(socket.getsockname()))
 
     loop.run_forever()
+
+def main():
+    # Logic for program
+    pass
+
+
+if __name__ == '__main__':
+    cli_args = cli_parser()
+    print(cli_args.parse_args())
