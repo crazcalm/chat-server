@@ -2,6 +2,7 @@ Feature: Startig the Chat Server
     The chat server should have a one of more customizable options.
 
     1. I should be able to pass in the port number
+    2. Give the chatroom a name
 
     Scenario Outline: Starting the server with different ports
         Given I want to use port <port_number>
