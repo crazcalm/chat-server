@@ -34,7 +34,7 @@ def cli_parser():
         epilog="Tesing epilog")
 
     chat_server.add_argument(
-        "--ip",
+        "--host",
         type=str,
         default="localhost",
         help="IP Address?")
@@ -53,13 +53,14 @@ def cli_parser():
 
     return chat_server
 
-def run_server():
+def run_server(host, port):
     # runs the server
     print("starting up..")
+    host = "127.0.0.1" if host == "localhost" else host
 
     loop = asyncio.get_event_loop()
-    coro = loop.create_server(SimpleChatClientProtocol, port=3333, 
-                host="127.0.0.1")
+    coro = loop.create_server(SimpleChatClientProtocol, port=port, 
+                host=host)
     server = loop.run_until_complete(coro)
 
     for socket in server.sockets:
@@ -68,10 +69,17 @@ def run_server():
     loop.run_forever()
 
 def main():
-    # Logic for program
-    pass
+    cli_args = cli_parser().parse_args()
+    run_server(cli_args.host, cli_args.port)
+    
 
 
 if __name__ == '__main__':
     cli_args = cli_parser()
-    print(cli_args.parse_args())
+    test = cli_args.parse_args()
+    print(test)
+    print(test.host)
+    print(test.port)
+    print(test.name)
+    main()
+    

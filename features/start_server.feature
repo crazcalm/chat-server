@@ -7,7 +7,7 @@ Feature: Startig the Chat Server
     Scenario Outline: Starting the server with different ports
         Given I want to use port <port_number>
         When I start the chat server
-        Then running the server should <result>
+        Then running the server should have <result> in its output
 
     Examples: Open ports
         | port_number | result   |
