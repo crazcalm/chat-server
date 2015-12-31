@@ -13,12 +13,36 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         clients.append(self)
 
     def data_received(self, data):
-        msg = data.decode()
+        msg = data.decode().strip()
         logging.debug("data_received: {}".format(msg))
 
-        if msg.strip() == "/quit":
+        if msg == "/disconnect":
             self.transport.close()
             logging.info("command: /quit")
+
+        elif msg == "/whoami":
+            logging.info("command: /whoami")
+
+        elif msg == "/people":
+            logging.info("command: /people")
+
+        elif msg == "/chatroom":
+            logging.info("command: /chatroom")
+
+        elif msg == "/help":
+            logging.info("command: /help")
+
+        elif msg.startswith("/who"):
+            command_args = msg.split(' ')[:2]
+            logging.info("command: {}".format(command_args))
+
+        elif msg.startswith("/msg"):
+            command_args = msg.split(' ')[:2]
+            logging.info("command: {}".format(command_args))
+
+        elif msg.startswith("/help"):
+            command_args = msg.split(' ')[:2]
+            logging.info("command: {}".format(command_args))
 
         for client in clients:
             client.transport.write("{}: {}".format(self.peername, 
