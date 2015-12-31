@@ -1,3 +1,0 @@
-INFO:root:starting up..
-DEBUG:asyncio:Using selector: EpollSelector
-INFO:root:serving on ('127.0.0.1', 3333)
