@@ -34,16 +34,20 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         elif msg == "/help":
             logging.info("command: /help")
 
-        elif msg.startswith("/who "):
+        elif msg.startswith("/whois "):
             command_args = msg.split(' ')[:2]
             logging.info("command: {}".format(command_args))
 
-        elif msg.startswith("/msg"):
+        elif msg.startswith("/msg "):
             command_args = msg.split(' ')[:2]
             logging.info("command: {}".format(command_args))
 
-        elif msg.startswith("/help"):
+        elif msg.startswith("/help "):
             command_args = msg.split(' ')[:2]
+            logging.info("command: {}".format(command_args))
+
+        elif msg.startswith("/set "):
+            # TODO: Figure out logic
             logging.info("command: {}".format(command_args))
 
         else:
