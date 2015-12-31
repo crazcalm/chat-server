@@ -9,7 +9,8 @@ class SimpleChatClientProtocol(asyncio.Protocol):
     def connection_made(self, transport):
         self.transport = transport
         self.peername = transport.get_extra_info("peername")
-        logging.info("connection_made: {}".format(self.peername))
+        self.name = "Unknown"
+        logging.info("connection_made: {}".format(self.peername).encode())
         clients.append(self)
 
     def data_received(self, data):
@@ -22,6 +23,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
 
         elif msg == "/whoami":
             logging.info("command: /whoami")
+            self.transport.write("You are {}".format(self.name).encode())
 
         elif msg == "/people":
             logging.info("command: /people")
@@ -32,7 +34,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         elif msg == "/help":
             logging.info("command: /help")
 
-        elif msg.startswith("/who"):
+        elif msg.startswith("/who "):
             command_args = msg.split(' ')[:2]
             logging.info("command: {}".format(command_args))
 
@@ -44,9 +46,10 @@ class SimpleChatClientProtocol(asyncio.Protocol):
             command_args = msg.split(' ')[:2]
             logging.info("command: {}".format(command_args))
 
-        for client in clients:
-            client.transport.write("{}: {}".format(self.peername, 
-                data.decode()).encode())
+        else:
+            for client in clients:
+                client.transport.write("{}: {}".format(self.peername, 
+                    data.decode()).encode())
 
     def connection_lost(self, ex):
         logging.info("connection_lost: {}".format(self.peername))
