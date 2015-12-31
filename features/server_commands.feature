@@ -5,11 +5,16 @@ Feature: Server Commands
     list:
         /disconnent
         /whoami
-        /who [name]
+        /whois [name]
         /msg [name]
         /help [command]
         /people
         /chatroom
+        /set [property] [value]
+
+    properties list:
+        - name
+        - description
 
     Background: I am connected to the chat server
         Given I came connected to the chat server as person1
@@ -28,12 +33,13 @@ Feature: Server Commands
         | "/whoami"             | "person1"                           |
         | "/help"               | "The list of commands"              |
         | "/help whoami"        | "/whoami returns your chatroom name"|
-        | "/help who"           | "/who [name] returns the ip"        |
+        | "/help whois"         | "/whois [name] returns the ip"        |
         | "/help disconnect"    | "/disconnect disconnects you from"  |
         | "/help msg"           | "/msg [name] allows you to send"    |
         | "/help help"          | "The list of commands"              |
         | "/help people"        | "/people returns the names of"      |
         | "/help chatroom"      | "/chatroom returns the name of"     |
+        | "/help set"           | "/set [property] [value] sets the"  |
         | "/people"             | "person1"                           |
 
     Scenario Outline: Commands that involve other clients
@@ -42,10 +48,12 @@ Feature: Server Commands
         Then the client should receive <response>
 
     Examples: Commands with proper arguements
-        | command        | response          |
-        | "/who person2" | "person2's ip is" | 
-        | "/msg person2" | "I got you msg!"  |
-        | "/people"      | "person2"         |
+        | command                   | response              |
+        | "/whois person2"          | "person2's ip is"     | 
+        | "/msg person2"            | "I got you msg!"      |
+        | "/people"                 | "person2"             |
+        | "/set name marcus"        | "name: marcus"        |
+        | "/set description I am me"| "description: I am me"|
 
     Examples: Commands with wrong arguements
         | command        | response                       |
