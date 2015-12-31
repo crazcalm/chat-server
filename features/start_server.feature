@@ -13,6 +13,3 @@ Feature: Startig the Chat Server
         | port_number | result   |
         | 3333        | "success"|
 
-    Examples: Non-open ports
-        | port_number | result   |
-        | 80          | "failure"|

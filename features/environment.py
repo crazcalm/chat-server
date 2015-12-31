@@ -1,11 +1,11 @@
 from unittest import TestCase
 
-def before_all(context):
-    print("BEFORE ALL")
+def before_scenario(context, scenario):
+    print("BEFORE {}".format(scenario))
     context.test = TestCase()
 
-def after_all(context):
-    print("AFTER ALL")
+def after_scenario(context, scenario):
+    print("AFTER {}".format(scenario))
     if hasattr(context, "chat_server"):
         if not context.chat_server.poll():
             context.chat_server.kill()
