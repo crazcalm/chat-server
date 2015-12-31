@@ -1,5 +1,6 @@
 from subprocess import Popen, PIPE
 import shlex
+import time
 
 """
 Note:
@@ -21,13 +22,18 @@ def step_impl(context, port):
 @when(u'I start the chat server')
 def step_impl(context):
     context.chat_server = Popen(context.command, stdout=PIPE)
+    # let the program start up
+    time.sleep(3)
 
 @then(u'running the server should have {result} in its output')
 def step_impl(context, result):
-    answer = {
-        'success': 'serving on',
-        'failure': 'unable to serve on'
-    }           
+    if 'success' in result:
+        expected = 'serving on'
+    elif 'failure' in result:
+        expected = 'unable to serve on'
+    else:
+        expected = ""
+
     output = read_server_log()
-    context.test.assertIn(answer.get(result, "fucked up"), output)
+    context.test.assertIn(expected, output)
 
