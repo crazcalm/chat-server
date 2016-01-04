@@ -1,3 +1,5 @@
+import help_text
+
 import asyncio
 import argparse
 import logging
@@ -33,6 +35,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
 
         elif msg == "/help":
             logging.info("command: /help")
+            self.transport.write("{}".format(help_text.HELP_GENERAL).encode()) 
 
         elif msg.startswith("/whois "):
             command_args = msg.split(' ')[:2]
@@ -45,6 +48,9 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         elif msg.startswith("/help "):
             command_args = msg.split(' ')[:2]
             logging.info("command: {}".format(command_args))
+            error_msg = "{} is not a valid command".format(command_args[1])
+            msg = help_text.HELP_DICT.get(command_args[1])
+            self.transport.write(msg.encode())
 
         elif msg.startswith("/set "):
             # TODO: Figure out logic

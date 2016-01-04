@@ -1,2 +1,4 @@
 *~
 server_log
+__pycache__/*
+*.pyc

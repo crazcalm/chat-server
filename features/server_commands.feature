@@ -29,17 +29,17 @@ Feature: Server Commands
         Then the client should receive <response>
         
     Examples: Commands and responses
-        | command               | response                            |
-        | "/whoami"             | "person1"                           |
-        | "/help"               | "The list of commands"              |
-        | "/help whoami"        | "/whoami returns your chatroom name"|
-        | "/help whois"         | "/whois [name] returns the ip"        |
-        | "/help disconnect"    | "/disconnect disconnects you from"  |
-        | "/help msg"           | "/msg [name] allows you to send"    |
-        | "/help help"          | "The list of commands"              |
-        | "/help people"        | "/people returns the names of"      |
-        | "/help chatroom"      | "/chatroom returns the name of"     |
-        | "/help set"           | "/set [property] [value] sets the"  |
+        | command               | response               |
+        | "/whoami"             | "person1"              |
+        | "/help"               | "The list of commands" |
+        | "/help whoami"        | "/whoami"  |
+        | "/help whois"         | "/whois" |
+        | "/help disconnect"    | "/disconnect"  |
+        | "/help msg"           | "/msg [name]"    |
+        | "/help help"          | "help [command]"              |
+        | "/help people"        | "/people"      |
+        | "/help chatroom"      | "/chatroom"     |
+        | "/help set"           | "/set [property] [value]"  |
         | "/people"             | "person1"                           |
 
     Scenario Outline: Commands that involve other clients
