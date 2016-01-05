@@ -12,12 +12,13 @@ def step_impl(context):
 
 @when(u'the client sends {command}')
 def step_impl(context, command):
-    context.person1.sendall(command.strip().encode())
+    context.person1.sendall(command.encode())
     # Give the server time to send response
     time.sleep(2)
 
 @then(u'the client should receive {response}')
 def step_impl(context, response):
+    print("tesint: {}".format(response))
     output = context.person1.recv(2048).decode()
     context.test.assertIn(response, output)    
 

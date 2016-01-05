@@ -10,6 +10,6 @@ Feature: Startig the Chat Server
         Then running the server should have <result> in its output
 
     Examples: Open ports
-        | port_number | result   |
-        | 3333        | "success"|
+        | port_number | result |
+        | 3333        | success|
 

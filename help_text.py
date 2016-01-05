@@ -1,5 +1,5 @@
 HELP_DISCONNECT = """
-/diconnect: Disconnects you from the chat server.
+/disconnect: Disconnects you from the chat server.
 """
 
 HELP_WHOAMI = """
