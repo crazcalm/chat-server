@@ -12,6 +12,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         self.transport = transport
         self.peername = transport.get_extra_info("peername")
         self.name = "Unknown"
+        self.description = "None"
         logging.info("connection_made: {}".format(self.peername).encode())
         clients.append(self)
 
@@ -26,6 +27,8 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         elif msg == "/whoami":
             logging.info("command: /whoami")
             self.transport.write("You are {}".format(self.name).encode())
+            self.transport.write("Description: {}".format(
+                self.description).encode())
 
         elif msg == "/people":
             logging.info("command: /people")
@@ -54,8 +57,22 @@ class SimpleChatClientProtocol(asyncio.Protocol):
 
         elif msg.startswith("/set "):
             # TODO: Figure out logic
+            command_args = msg.strip().split(' ')
             logging.info("command: {}".format(command_args))
-
+            key, value = None, None
+            if len(command_args) < 3:
+                # not enough args for command.
+                pass
+            else:
+                key, *value = command_args[1:]
+            if key and value and key in ['name', 'description']:
+                if key == 'name':
+                    self.name = ' '.join(value)
+                elif key == 'description':
+                    self.description = ' '.join(value)
+            else:
+                # something is wrong with the args
+                pass            
         else:
             for client in clients:
                 client.transport.write("{}: {}".format(self.peername, 
