@@ -30,7 +30,7 @@ Feature: Server Commands
         
     Examples: Commands and responses
         | command             | response             |
-        | /whoami             | person1              |
+        | /whoami             | No Name              |
         | /help               | Command List |
         | /help whoami        | /whoami  |
         | /help whois         | /whois |
@@ -40,7 +40,8 @@ Feature: Server Commands
         | /help people        | /people      |
         | /help chatroom      | /chatroom     |
         | /help set           | /set [property] [value]  |
-
+        | set name Marcus     | Marcus |
+        | set description LOVE| LOVE   |
 
     Scenario Outline: Commands that involve other clients
         Given person2 is in the chatroom
@@ -52,8 +53,6 @@ Feature: Server Commands
         | /whois person2          | person2's ip is     | 
         | /msg person2            | I got you msg!      |
         | /people                 | person2             |
-        | /set name marcus        | name: marcus        |
-        | /set description I am me| description: I am me|
 
     Examples: Commands with wrong arguements
         | command      | response                     |

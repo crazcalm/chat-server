@@ -11,7 +11,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
     def connection_made(self, transport):
         self.transport = transport
         self.peername = transport.get_extra_info("peername")
-        self.name = "Unknown"
+        self.name = "No Name"
         self.description = "None"
         logging.info("connection_made: {}".format(self.peername).encode())
         clients.append(self)
@@ -26,8 +26,8 @@ class SimpleChatClientProtocol(asyncio.Protocol):
 
         elif msg == "/whoami":
             logging.info("command: /whoami")
-            self.transport.write("You are {}".format(self.name).encode())
-            self.transport.write("Description: {}".format(
+            self.transport.write("You are {}\n".format(self.name).encode())
+            self.transport.write("Description: {}\n".format(
                 self.description).encode())
 
         elif msg == "/people":
@@ -68,8 +68,11 @@ class SimpleChatClientProtocol(asyncio.Protocol):
             if key and value and key in ['name', 'description']:
                 if key == 'name':
                     self.name = ' '.join(value)
+                    self.transport.write("Name: {}\n".format(self.name))
                 elif key == 'description':
                     self.description = ' '.join(value)
+                    self.transport.write("Description: {}\n".format(
+                        self.description))
             else:
                 # something is wrong with the args
                 pass            
