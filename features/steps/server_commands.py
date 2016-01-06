@@ -30,3 +30,5 @@ def step_impl(context):
 @given(u'person2 is in the chatroom')
 def step_impl(context):
     raise NotImplementedError(u'STEP: Given person2 is in the chatroom')
+    context.person2 = socket.create_connection(('localhost', 3333))
+    context.person2.sendall('/set name Player 2'.encode())

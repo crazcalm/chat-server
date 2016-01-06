@@ -50,7 +50,7 @@ Feature: Server Commands
 
     Examples: Commands with proper arguements
         | command                 | response            |
-        | /whois person2          | person2's ip is     | 
+        | /whois person2          | Player2     | 
         | /msg person2            | I got you msg!      |
         | /people                 | person2             |
 
