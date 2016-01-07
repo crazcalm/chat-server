@@ -8,7 +8,7 @@ Feature: Server Commands
         /whois [name]
         /msg [name], [msg]
         /help [command]
-        /people # TODO: Add back to test
+        /people
         /chatroom
         /set [property] [value]
 
@@ -50,11 +50,11 @@ Feature: Server Commands
 
     Examples: Commands with proper arguements
         | command                 | response            |
-        | /whois person2          | Player2     | 
-        | /msg person2, hi!       | I got you msg!      |
+        | /whois person2          | friend     | 
+        |/msg person2, hi!| msg sent      |
         | /people                 | person2             |
 
     Examples: Commands with wrong arguements
         | command      | response                     |
-        | /who unknown | That person does not exist...| 
-        | /msg unknown | That person does not exist...|
+        | /whois unknown | I don't know| 
+        | /msg unknown, hi | Could not find|
