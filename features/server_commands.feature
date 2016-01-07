@@ -6,7 +6,7 @@ Feature: Server Commands
         /disconnent
         /whoami
         /whois [name]
-        /msg [name]
+        /msg [name], [msg]
         /help [command]
         /people # TODO: Add back to test
         /chatroom
@@ -51,7 +51,7 @@ Feature: Server Commands
     Examples: Commands with proper arguements
         | command                 | response            |
         | /whois person2          | Player2     | 
-        | /msg person2            | I got you msg!      |
+        | /msg person2, hi!       | I got you msg!      |
         | /people                 | person2             |
 
     Examples: Commands with wrong arguements

@@ -41,13 +41,13 @@ class SimpleChatClientProtocol(asyncio.Protocol):
             self.transport.write("{}".format(help_text.HELP_GENERAL).encode()) 
 
         elif msg.startswith("/whois "):
-            command, *name_list = msg.split(' ')[:]
+            command, name_list = msg.split(' ', 1)
             logging.info("command: {}\Args: {}".format(
                 command, name_list))
             found = False
             name = ' '.join(name_list)
             for client in clients:
-                if client.name == name:
+                if client.name.strip() == name.strip():
                     found = client
                     break
 
@@ -59,17 +59,19 @@ class SimpleChatClientProtocol(asyncio.Protocol):
                     'Did not find anyone by that name'.encode())
 
         elif msg.startswith("/msg "):
-            name, *direct_msg = msg.split(' ')[1:]
+            args = msg.split(' ', 1)[1]
+            name, direct_msg = args.split(',', 1)
             logging.info("command: {}, {}".format(name, direct_msg))
 
             found = False
             for client in clients:
-                if client.name == name:
+                # strip should happen somewhere else!
+                if client.name.strip() == name.strip():
                     found = client
                     break
             if found:
                 client.transport.write('*{}*\n'.format(
-                    ' '.join(direct_msg)).encode())
+                    ' '.join(direct_msg.strip())).encode())
 
         elif msg.startswith("/help "):
             command_args = msg.split(' ')[:2]
@@ -79,7 +81,6 @@ class SimpleChatClientProtocol(asyncio.Protocol):
             self.transport.write(msg.encode())
 
         elif msg.startswith("/set "):
-            # TODO: Figure out logic
             command_args = msg.strip().split(' ')
             logging.info("command: {}".format(command_args))
             key, value = None, None
