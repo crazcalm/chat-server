@@ -50,9 +50,9 @@ Feature: Server Commands
 
     Examples: Commands with proper arguements
         | command                 | response            |
-        | /whois person2          | friend     | 
-        |/msg person2, hi!| msg sent      |
-        | /people                 | person2             |
+        | /whois M          | friend     | 
+        | /msg M, hi!| msg sent      |
+        | /people                 | M             |
 
     Examples: Commands with wrong arguements
         | command      | response                     |

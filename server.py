@@ -67,9 +67,12 @@ class SimpleChatClientProtocol(asyncio.Protocol):
             logging.info("command: /msg-{}, {}".format(name, direct_msg))
 
             found = False
+            logging.debug("Looking for: {}".format(name))
             for client in clients:
+                logging.debug("client: {}".format(client.name))
                 # strip should happen somewhere else!
                 if client.name.strip() == name.strip():
+                    logging.debug("Found: {}".format(name))
                     found = client
                     break
             if found:
@@ -77,6 +80,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
                     ' '.join(direct_msg.strip())).encode())
                 self.transport.write('msg sent'.encode())
             else:
+                logging.debug("Not Found: {}".format(name))
                 self.transport.write('Could not find {}\n'.format(
                     name).encode())
 

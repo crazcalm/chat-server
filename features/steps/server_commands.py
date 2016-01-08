@@ -12,7 +12,7 @@ def step_impl(context):
 
 @when(u'the client sends {command}')
 def step_impl(context, command):
-    context.person1.sendall(command.encode())
+    context.person1.sendall(command.strip().encode())
     # Give the server time to send response
     time.sleep(1)
 
@@ -28,8 +28,9 @@ def step_impl(context):
 @given(u'person2 is in the chatroom')
 def step_impl(context):
     context.person2 = socket.create_connection(('localhost', 3333))
-    context.person2.sendall('/set name person2'.encode())
-    context.person2.sendall('/set descrtiption friend'.encode())
+    context.person2.sendall('/set name M'.encode())
+    time.sleep(1)
+    context.person2.sendall('/set description friend'.encode())
     context.person2.sendall('/whoami'.encode())
     output = context.person2.recv(1024)
-    context.test.assertIn('person2', output.decode())
+    context.test.assertIn('M', output.decode())
