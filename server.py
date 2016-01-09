@@ -8,6 +8,13 @@ import logging
 clients = []
 
 class SimpleChatClientProtocol(asyncio.Protocol):
+    def _send_msg(self, client, msg):
+        client.transport.write("{}: {}\n".format(self.peername,
+            msg).encode())
+
+    def _send_to_self(self, msg):
+        self.transport.write("{}\n".format(msg).encode())
+
     def connection_made(self, transport):
         self.transport = transport
         self.peername = transport.get_extra_info("peername")
@@ -15,6 +22,23 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         self.description = "None"
         logging.info("connection_made: {}".format(self.peername).encode())
         clients.append(self)
+
+    def send_to_everyone(self, msg):
+        for client in clients:
+            self._send_msg(client, msg)
+
+    def find_client_by_name(self, name):
+        found = None
+        for client in clients:
+            if client.name.strip() == name:
+                found = client
+                break
+        return found
+
+
+    def send_to_list_of_people(self, people):
+        for client in people:
+            self._send_msg(client, msg)
 
     def data_received(self, data):
         msg = data.decode().strip()
@@ -26,70 +50,57 @@ class SimpleChatClientProtocol(asyncio.Protocol):
 
         elif msg == "/whoami":
             logging.info("command: /whoami")
-            self.transport.write("You are {}\n".format(self.name).encode())
-            self.transport.write("Description: {}\n".format(
-                self.description).encode())
+            self._send_to_self("You are {}\n".format(self.name))
+            self._send_to_self("Description: {}\n".format(
+                self.description))
 
         elif msg == "/people":
             logging.info("command: /people")
             people = [client for client in clients if client != self]
             for index, client in enumerate(people):
-                self.transport.write("{}: {}\n".format(
-                    index, client.name).encode()) 
+                self._send_to_self("{}: {}\n".format(index, client.name))
 
         elif msg == "/chatroom":
             logging.info("command: /chatroom")
 
         elif msg == "/help":
             logging.info("command: /help")
-            self.transport.write("{}".format(help_text.HELP_GENERAL).encode()) 
+            self._send_to_self("{}".format(help_text.HELP_GENERAL)) 
 
         elif msg.startswith("/whois "):
             command, name = msg.split(' ', 1)
             logging.info("command: {}\Args: {}".format(
                 command, name))
-            found = False
-            for client in clients:
-                if client.name.strip() == name.strip():
-                    found = client
-                    break
+
+            found = self.find_client_by_name(name.strip())
 
             if found:
-                self.transport.write('Name: {}\nDescription: {}\n'.format(
-                    found.name, found.description).encode())
+                self._send_to_self('Name: {}\nDescription: {}'.format(
+                    found.name, found.description))
             else:
-                self.transport.write(
-                    "I don't know\n".encode())
+                self._send_to_self("I don't know")
 
         elif msg.startswith("/msg "):
             args = msg.split(' ', 1)[1]
             name, direct_msg = args.split(',', 1)
             logging.info("command: /msg-{}, {}".format(name, direct_msg))
 
-            found = False
-            logging.debug("Looking for: {}".format(name))
-            for client in clients:
-                logging.debug("client: {}".format(client.name))
-                # strip should happen somewhere else!
-                if client.name.strip() == name.strip():
-                    logging.debug("Found: {}".format(name))
-                    found = client
-                    break
+            found = self.find_client_by_name(name.strip())
+
             if found:
-                client.transport.write('*{}\n'.format(
-                    ' '.join(direct_msg.strip())).encode())
-                self.transport.write('msg sent'.encode())
+                direct_msg = ''.join(direct_msg.strip())
+                self._send_msg(found, "*{}".format(direct_msg))
+                self._send_to_self('msg sent')
             else:
                 logging.debug("Not Found: {}".format(name))
-                self.transport.write('Could not find {}\n'.format(
-                    name).encode())
+                self._send_to_self('Could not find {}'.format(name))
 
         elif msg.startswith("/help "):
             command_args = msg.split(' ')[:2]
             logging.info("command: {}".format(command_args))
             error_msg = "{} is not a valid command".format(command_args[1])
             msg = help_text.HELP_DICT.get(command_args[1])
-            self.transport.write(msg.encode())
+            self._send_to_self(msg)
 
         elif msg.startswith("/set "):
             command_args = msg.strip().split(' ')
@@ -103,19 +114,16 @@ class SimpleChatClientProtocol(asyncio.Protocol):
             if key and value and key in ['name', 'description']:
                 if key == 'name':
                     self.name = ' '.join(value)
-                    self.transport.write(
-                        "Name: {}\n".format(self.name).encode())
+                    self._send_to_self("Name: {}".format(self.name))
                 elif key == 'description':
                     self.description = ' '.join(value)
-                    self.transport.write("Description: {}\n".format(
-                        self.description).encode())
+                    self._send_to_self("Description: {}".format(
+                        self.description))
             else:
                 # something is wrong with the args
                 pass            
         else:
-            for client in clients:
-                client.transport.write("{}: {}".format(self.peername, 
-                    data.decode()).encode())
+            self.send_to_everyone(msg)
 
     def connection_lost(self, ex):
         logging.info("connection_lost: {}".format(self.peername))
@@ -177,4 +185,4 @@ if __name__ == '__main__':
     cli_args = cli_parser()
     test = cli_args.parse_args()
     main()
-    
+

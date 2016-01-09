@@ -7,7 +7,7 @@ from subprocess import Popen, PIPE
 def step_impl(context):
     context.chat_server = Popen(["python", "server.py"], stdout=PIPE)
     # Give the server time to start
-    time.sleep(2)
+    time.sleep(3)
     context.person1 = socket.create_connection(('localhost', 3333))
 
 @when(u'the client sends {command}')
