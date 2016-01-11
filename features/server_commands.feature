@@ -41,7 +41,15 @@ Feature: Server Commands
         | /help chatroom      | /chatroom     |
         | /help set           | /set [property] [value]  |
         | set name Marcus     | Marcus |
+        | set name Marcus the great!| Marcus the great!|
         | set description LOVE| LOVE   |
+        | set description Love yourself| Love yourself |
+
+    Examples: Commands with wrong arguments
+        | command     | response               |
+        |set          | /set [property] [value]|
+        |set name     | /set [property] [value]|
+        |set hair blue| /set [property] [value]|
 
     Scenario Outline: Commands that involve other clients
         Given person2 is in the chatroom
@@ -56,5 +64,8 @@ Feature: Server Commands
 
     Examples: Commands with wrong arguements
         | command      | response                     |
-        | /whois unknown | I don't know| 
+        | /whois unknown | I don't know|
+        | /whois | /whois | 
         | /msg unknown, hi | Could not find|
+        | /msg | /msg|
+        | /msg M | /msg|

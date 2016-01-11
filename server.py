@@ -68,32 +68,38 @@ class SimpleChatClientProtocol(asyncio.Protocol):
             self._send_to_self("{}".format(help_text.HELP_GENERAL)) 
 
         elif msg.startswith("/whois "):
-            command, name = msg.split(' ', 1)
-            logging.info("command: {}\Args: {}".format(
-                command, name))
+            if len(msg.split(' ')) >= 2:
+                command, name = msg.split(' ', 1)
+                logging.info("command: {}\Args: {}".format(
+                    command, name))
 
-            found = self.find_client_by_name(name.strip())
+                found = self.find_client_by_name(name.strip())
 
-            if found:
-                self._send_to_self('Name: {}\nDescription: {}'.format(
-                    found.name, found.description))
+                if found:
+                    self._send_to_self('Name: {}\nDescription: {}'.format(
+                        found.name, found.description))
+                else:
+                    self._send_to_self("I don't know")
             else:
-                self._send_to_self("I don't know")
+                self._send_to_self(help_text.HELP_WHOIS)
 
         elif msg.startswith("/msg "):
-            args = msg.split(' ', 1)[1]
-            name, direct_msg = args.split(',', 1)
-            logging.info("command: /msg-{}, {}".format(name, direct_msg))
+            if len(msg.split(' ')) and ',' in msg:
+                args = msg.split(' ', 1)[1]
+                name, direct_msg = args.split(',', 1)
+                logging.info("command: /msg-{}, {}".format(name, direct_msg))
 
-            found = self.find_client_by_name(name.strip())
+                found = self.find_client_by_name(name.strip())
 
-            if found:
-                direct_msg = ''.join(direct_msg.strip())
-                self._send_msg(found, "*{}".format(direct_msg))
-                self._send_to_self('msg sent')
+                if found:
+                    direct_msg = ''.join(direct_msg.strip())
+                    self._send_msg(found, "*{}".format(direct_msg))
+                    self._send_to_self('msg sent')
+                else:
+                    logging.debug("Not Found: {}".format(name))
+                    self._send_to_self('Could not find {}'.format(name))
             else:
-                logging.debug("Not Found: {}".format(name))
-                self._send_to_self('Could not find {}'.format(name))
+                self._send_to_self(help_text.HELP_MSG)
 
         elif msg.startswith("/help "):
             command_args = msg.split(' ')[:2]
@@ -106,22 +112,20 @@ class SimpleChatClientProtocol(asyncio.Protocol):
             command_args = msg.strip().split(' ')
             logging.info("command: {}\n".format(command_args))
             key, value = None, None
-            if len(command_args) < 3:
-                # not enough args for command.
-                pass
-            else:
+            if len(command_args) >= 3 and\
+                    command_args[1] in ['name', 'description']:
                 key, *value = command_args[1:]
-            if key and value and key in ['name', 'description']:
                 if key == 'name':
+                    logging.debug('setting name to {}'.format(value))
                     self.name = ' '.join(value)
                     self._send_to_self("Name: {}".format(self.name))
                 elif key == 'description':
+                    logging.debug('seeting description to {}'.format(value))
                     self.description = ' '.join(value)
                     self._send_to_self("Description: {}".format(
                         self.description))
             else:
-                # something is wrong with the args
-                pass            
+                self._send_to_self(help_text.HELP_SET)
         else:
             self.send_to_everyone(msg)
 
