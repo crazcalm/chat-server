@@ -178,7 +178,8 @@ def main():
     logging.basicConfig(
         filename="server_log",
         filemode="w",
-        level=logging.DEBUG
+        level=logging.DEBUG,
+        format='%(asctime)s--%(levelname)a--%(funcName)s--%(name)s:%(message)s'
     )
     cli_args = cli_parser().parse_args()
     run_server(cli_args.host, cli_args.port)
