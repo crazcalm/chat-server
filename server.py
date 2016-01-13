@@ -9,7 +9,7 @@ clients = []
 
 class SimpleChatClientProtocol(asyncio.Protocol):
     def _send_msg(self, client, msg):
-        client.transport.write("{}: {}\n".format(self.peername,
+        client.transport.write("{}: {}\n".format(self.name,
             msg).encode())
 
     def _send_to_self(self, msg):
