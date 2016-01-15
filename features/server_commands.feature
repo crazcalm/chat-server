@@ -44,6 +44,7 @@ Feature: Server Commands
         | /set name Marcus the great!| Marcus the great!|
         | /set description LOVE| LOVE   |
         | /set description Love yourself| Love yourself |
+        | /chatroom            | Chat Room |
 
     Examples: Commands with wrong arguments
         | command     | response               |

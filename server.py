@@ -8,10 +8,9 @@ import logging
 clients = []
 
 class SimpleChatClientProtocol(asyncio.Protocol):
-    name = 'Chat Server'
 
     def __init__(self, name):
-        SimpleChatClientProtocol.name = name
+        self.chatroom_name = name
 
     def _send_msg(self, client, msg):
         client.transport.write("{}: {}\n".format(self.name,
@@ -68,7 +67,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         elif msg == "/chatroom":
             logging.info("command: /chatroom")
             self._send_to_self("Chatroom name: {}".format(
-                                SimpleChatClientProtocol.name))
+                                self.chatroom_name))
 
         elif msg == "/help":
             logging.info("command: /help")
