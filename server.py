@@ -8,6 +8,11 @@ import logging
 clients = []
 
 class SimpleChatClientProtocol(asyncio.Protocol):
+    name = 'Chat Server'
+
+    def __init__(self, name):
+        SimpleChatClientProtocol.name = name
+
     def _send_msg(self, client, msg):
         client.transport.write("{}: {}\n".format(self.name,
             msg).encode())
@@ -62,6 +67,8 @@ class SimpleChatClientProtocol(asyncio.Protocol):
 
         elif msg == "/chatroom":
             logging.info("command: /chatroom")
+            self._send_to_self("Chatroom name: {}".format(
+                                SimpleChatClientProtocol.name))
 
         elif msg == "/help":
             logging.info("command: /help")
@@ -159,14 +166,14 @@ def cli_parser():
 
     return chat_server
 
-def run_server(host, port):
+def run_server(host, port, name):
     # runs the server
     logging.info("starting up..")
     host = "127.0.0.1" if host == "localhost" else host
 
     loop = asyncio.get_event_loop()
-    coro = loop.create_server(SimpleChatClientProtocol, port=port, 
-                host=host)
+    coro = loop.create_server(lambda: SimpleChatClientProtocol(name),
+                port=port, host=host)
     server = loop.run_until_complete(coro)
 
     for socket in server.sockets:
@@ -182,7 +189,7 @@ def main():
         format='%(asctime)s--%(levelname)a--%(funcName)s--%(name)s:%(message)s'
     )
     cli_args = cli_parser().parse_args()
-    run_server(cli_args.host, cli_args.port)
+    run_server(cli_args.host, cli_args.port, cli_args.name)
     
 
 
