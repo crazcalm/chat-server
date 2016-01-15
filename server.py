@@ -168,6 +168,7 @@ def cli_parser():
 def run_server(host, port, name):
     # runs the server
     logging.info("starting up..")
+    print("Server running on {}:{}".format(host, port))
     host = "127.0.0.1" if host == "localhost" else host
 
     loop = asyncio.get_event_loop()
@@ -196,4 +197,3 @@ if __name__ == '__main__':
     cli_args = cli_parser()
     test = cli_args.parse_args()
     main()
-
