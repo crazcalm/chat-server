@@ -142,26 +142,26 @@ class SimpleChatClientProtocol(asyncio.Protocol):
 def cli_parser():
     # logic for argparse
     chat_server = argparse.ArgumentParser(
-        description="testing description",
-        epilog="Tesing epilog")
+        description=help_text.CLI.get('description'),
+        epilog=help_text.CLI.get('epilog'))
 
     chat_server.add_argument(
         "--host",
         type=str,
         default="localhost",
-        help="IP Address?")
+        help=help_text.CLI.get('host'))
 
     chat_server.add_argument(
         "--port",
         type=int,
         default=3333,
-        help="The port the app will use?")
+        help=help_text.CLI.get('port'))
 
     chat_server.add_argument(
         "--name",
         type=str,
         default="Chat Room",
-        help="Names the chat room")
+        help=help_text.CLI.get('name'))
 
     return chat_server
 

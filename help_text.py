@@ -63,3 +63,21 @@ HELP_DICT = {
     'msg': HELP_MSG,
     'set': HELP_SET
 }
+
+DESCRIPTION = "This is a Basic Chat Server"
+
+EPILOG = 'I hope you enjoy the app! :D'
+
+HOST = 'selects the ip the chat server will be running on'
+
+PORT = 'selects the port that the chat server will run on'
+
+NAME = 'selects a name for the chatroom'
+
+CLI = {
+    'description': DESCRIPTION,
+    'epilog': EPILOG,
+    'host': HOST,
+    'port': PORT,
+    'name': NAME
+}
