@@ -33,8 +33,36 @@
 ##Starting the Chat Server
 	python server.py -h
 
+	usage: server.py [-h] [--host HOST] [--port PORT] [--name NAME]
+
+	This is a Basic Chat Server
+
 	optional arguments:
   	-h, --help   show this help message and exit
-  	--host HOST  IP Address
-  	--port PORT  The port the app will use
-  	--name NAME  Names the chat room
+  	--host HOST  selects the ip the chat server will be running on
+  	--port PORT  selects the port that the chat server will run on
+  	--name NAME  selects a name for the chatroom
+
+	I hope you enjoy :D
+
+##Using Netcat to connect to the Server
+	Basic command: nc [ip] [port]
+
+    By default, the chat server starts on localhost
+    port 3333. To connect via netcat, use the below command.
+    - nc localhost 333
+
+##How to run the tests
+	Running the behave command from the root directory
+    will run the test. Depending on how you have
+    installed behave, one of the two following command
+    will work.
+
+    - behave
+    or
+    - python -m behave
+
+##Helpful References
+* behave website: [add website]
+* GTK+ python docs: [add website]
+* Netcat tutorial: [add website]
