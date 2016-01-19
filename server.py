@@ -3,7 +3,7 @@ import help_text
 import asyncio
 import argparse
 import logging
-
+from random import randint
 
 clients = []
 
@@ -24,7 +24,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         result = True
         for client in clients:
             logging.debug("Checking against: {}".format(client.name))
-            if name == client.name:
+            if name == client.name and self != client:
                 result = False
                 break
         logging.debug("unique: {}".format(result))
@@ -34,9 +34,12 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         self.transport = transport
         self.peername = transport.get_extra_info("peername")
         self.name = "No Name"
+        while not self._unique_name(self.name):
+            self.name += str(randint(0,9))
         self.description = "None"
         logging.info("connection_made: {}".format(self.peername).encode())
         clients.append(self)
+        self._send_to_self("Welcome to {}!".format(self.chatroom_name))
 
     def send_to_everyone(self, msg):
         for client in clients:
@@ -45,7 +48,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
     def find_client_by_name(self, name):
         found = None
         for client in clients:
-            if client.name.strip() == name and client != self:
+            if client.name.strip() == name:
                 found = client
                 break
         return found
