@@ -146,7 +146,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
                             "The name you selected is all ready in use." 
                             "\nPlease select another name.")
                 elif key == 'description':
-                    logging.debug('seeting description to {}'.format(value))
+                    logging.debug('setting description to {}'.format(value))
                     self.description = ' '.join(value)
                     self._send_to_self("Description: {}".format(
                         self.description))
