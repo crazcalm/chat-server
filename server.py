@@ -19,6 +19,17 @@ class SimpleChatClientProtocol(asyncio.Protocol):
     def _send_to_self(self, msg):
         self.transport.write("{}\n".format(msg).encode())
 
+    def _unique_name(self, name):
+        logging.debug("Is the name {} unique?".format(name))
+        result = True
+        for client in clients:
+            logging.debug("Checking against: {}".format(client.name))
+            if name == client.name:
+                result = False
+                break
+        logging.debug("unique: {}".format(result))
+        return result
+
     def connection_made(self, transport):
         self.transport = transport
         self.peername = transport.get_extra_info("peername")
@@ -34,7 +45,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
     def find_client_by_name(self, name):
         found = None
         for client in clients:
-            if client.name.strip() == name:
+            if client.name.strip() == name and client != self:
                 found = client
                 break
         return found
@@ -122,9 +133,15 @@ class SimpleChatClientProtocol(asyncio.Protocol):
                     command_args[1] in ['name', 'description']:
                 key, *value = command_args[1:]
                 if key == 'name':
-                    logging.debug('setting name to {}'.format(value))
-                    self.name = ' '.join(value)
-                    self._send_to_self("Name: {}".format(self.name))
+                    name = ' '.join(value)
+                    if self._unique_name(name):
+                        logging.debug('setting name to {}'.format(value))
+                        self.name = name
+                        self._send_to_self("Name: {}".format(self.name))
+                    else:
+                        self._send_to_self(
+                            "The name you selected is all ready in use." 
+                            "\nPlease select another name.")
                 elif key == 'description':
                     logging.debug('seeting description to {}'.format(value))
                     self.description = ' '.join(value)

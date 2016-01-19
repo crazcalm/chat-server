@@ -61,6 +61,7 @@ Feature: Server Commands
         | /whois M          | friend     | 
         | /msg M, hi!| msg sent      |
         | /people                 | M             |
+        | /set name M | all ready in use |
 
     Examples: Commands with wrong arguements
         | command      | response                     |
