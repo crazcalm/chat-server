@@ -62,6 +62,15 @@
     or
     - python -m behave
 
+##How to run test with test coverage
+	python -m coverage run -m behave
+
+	Note:This will give you test coverage of the tests.
+
+##Coverage reports
+* html: coverage html
+* terminal: coverage report
+
 ##Helpful References
 * behave website: [add website]
 * GTK+ python docs: [add website]

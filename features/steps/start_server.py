@@ -29,10 +29,6 @@ def step_impl(context):
 def step_impl(context, result):
     if 'success' in result:
         expected = 'serving on'
-    elif 'failure' in result:
-        expected = 'unable to serve on'
-    else:
-        expected = ""
 
     output = read_server_log()
     context.test.assertIn(expected, output)

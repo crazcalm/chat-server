@@ -1,0 +1,11 @@
+[html]
+directory = coverage_html_report
+
+[run]
+include = features/*
+cover_pylib = False
+branch = True
+
+[report]
+precision = 2
+show_missing = True
