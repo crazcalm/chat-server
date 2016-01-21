@@ -1,2 +1,4 @@
 behave
 coverage
+pep8
+flake8
