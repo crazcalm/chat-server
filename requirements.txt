@@ -2,7 +2,7 @@ behave
 coverage
 
 # For Sphinxs
-sphinxs
+sphinx
 doctutils
 jinja2
 pygments
