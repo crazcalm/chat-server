@@ -1,2 +1,8 @@
 behave
 coverage
+
+# For Sphinxs
+sphinxs
+doctutils
+jinja2
+pygments
