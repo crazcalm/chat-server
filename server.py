@@ -21,6 +21,10 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         """
         This method sends messages clients to other clients
         in the chatroom.
+
+        Args:
+            client (SimpleChatClientProtocol): A chat server client
+            msg (str): message to be sent 
         """
         client.transport.write("{}: {}\n".format(self.name,
             msg).encode())
@@ -29,7 +33,10 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         """
         This method sends messages to self. Typically used for
         help dialogs and other interactions that are meant only
-        for this client. 
+        for this client.
+
+        Args:
+            msg (str): message to be sent
         """
         self.transport.write("{}\n".format(msg).encode())
 
@@ -39,8 +46,11 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         in as a parameter is unique among the names of the
         clients in the chatroom.
 
-        param: str
-        return: Boolean 
+        Args:
+            name (str): a potential name
+
+        Return:
+            str or false: Returns False or name, which is Truthy
         """
         logging.debug("Is the name {} unique?".format(name))
         result = True
@@ -57,7 +67,8 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         This method designates what will happen when a client
         makes a connection to the server.
 
-        param: socket
+        Args:
+            transport (socket): The incoming socket from the client
         """
         self.transport = transport
         self.peername = transport.get_extra_info("peername")
@@ -72,6 +83,9 @@ class SimpleChatClientProtocol(asyncio.Protocol):
     def send_to_everyone(self, msg):
         """
         This method sends a message to everyone in the chatroom.
+
+        Args:
+            msg (str): The message to be sent
         """
         for client in clients:
             self._send_msg(client, msg)
@@ -83,6 +97,12 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         If the client is found, a reference to that client
         is returned. If the client is not found, then a None
         object is returned.
+
+        Args:
+            name (str): The name used in the search
+
+        Returns:
+            False or client: False or client, which is truthy
         """
         found = None
         for client in clients:
@@ -96,8 +116,9 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         """
         This method sends a message to a list of people.
 
-        param: people - list of clients
-        param: msg - str
+        Args:
+            people (list): list of clients
+            msg (str): The message to be sent
         """
         # Currently not used. If I dediced to add groups
         # to the app, then I will use this method.
@@ -109,6 +130,9 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         This method is in charge of receiving the data that
         has been sent from the client. The rules for how
         this data is dealt with exist here.
+
+        Args:
+            data (byte): The data received over the socket connection
         """
         msg = data.decode().strip()
         logging.debug("data_received: {}".format(msg))
@@ -210,6 +234,9 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         """
         This method fires when the connections between
         the client and server is lost.
+
+        Args:
+            ex (I do not know): I should learn what you are...
         """
         logging.info("connection_lost: {}".format(self.peername))
         clients.remove(self)
@@ -247,9 +274,10 @@ def run_server(host, port, name):
     """
     This function is charge of running the server.
 
-    param: host - str
-    param: port - int
-    param: name - str
+    Args:
+        host (str): host name/ip address
+        port (int): port to which the app will run on
+        name (str): the name of the chatroom
     """
     logging.info("starting up..")
     print("Server running on {}:{}".format(host, port))
