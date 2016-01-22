@@ -7,6 +7,7 @@ from random import randint
 
 clients = []
 
+
 class SimpleChatClientProtocol(asyncio.Protocol):
     """
     This class is the heart of the Chat Server. For each client that
@@ -24,10 +25,10 @@ class SimpleChatClientProtocol(asyncio.Protocol):
 
         Args:
             client (SimpleChatClientProtocol): A chat server client
-            msg (str): message to be sent 
+            msg (str): message to be sent
         """
         client.transport.write("{}: {}\n".format(self.name,
-            msg).encode())
+                               msg).encode())
 
     def _send_to_self(self, msg):
         """
@@ -74,7 +75,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         self.peername = transport.get_extra_info("peername")
         self.name = "No Name"
         while not self._unique_name(self.name):
-            self.name += str(randint(0,9))
+            self.name += str(randint(0, 9))
         self.description = "None"
         logging.info("connection_made: {}".format(self.peername).encode())
         clients.append(self)
@@ -110,7 +111,6 @@ class SimpleChatClientProtocol(asyncio.Protocol):
                 found = client
                 break
         return found
-
 
     def send_to_list_of_people(self, people, msg):
         """
@@ -160,7 +160,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
 
         elif msg == "/help":
             logging.info("command: /help")
-            self._send_to_self("{}".format(help_text.HELP_GENERAL)) 
+            self._send_to_self("{}".format(help_text.HELP_GENERAL))
 
         elif msg.startswith("/whois "):
             if len(msg.split(' ')) >= 2:
@@ -218,7 +218,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
                         self._send_to_self("Name: {}".format(self.name))
                     else:
                         self._send_to_self(
-                            "The name you selected is all ready in use." 
+                            "The name you selected is all ready in use."
                             "\nPlease select another name.")
                 elif key == 'description':
                     logging.debug('setting description to {}'.format(value))
@@ -240,6 +240,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         """
         logging.info("connection_lost: {}".format(self.peername))
         clients.remove(self)
+
 
 def cli_parser():
     """
@@ -270,6 +271,7 @@ def cli_parser():
 
     return chat_server
 
+
 def run_server(host, port, name):
     """
     This function is charge of running the server.
@@ -285,13 +287,14 @@ def run_server(host, port, name):
 
     loop = asyncio.get_event_loop()
     coro = loop.create_server(lambda: SimpleChatClientProtocol(name),
-                port=port, host=host)
+                              port=port, host=host)
     server = loop.run_until_complete(coro)
 
     for socket in server.sockets:
         logging.info("serving on {}".format(socket.getsockname()))
 
     loop.run_forever()
+
 
 def main():
     """
@@ -305,7 +308,7 @@ def main():
         format='%(asctime)s--%(levelname)a--%(funcName)s--%(name)s:%(message)s'
     )
     cli_args = cli_parser().parse_args()
-    run_server(cli_args.host, cli_args.port, cli_args.name)    
+    run_server(cli_args.host, cli_args.port, cli_args.name)
 
 
 if __name__ == '__main__':

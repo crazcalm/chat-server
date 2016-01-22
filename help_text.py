@@ -15,8 +15,8 @@ HELP_CHATROOM = """
 """
 
 HELP_HELP = """
-- /help displays the list of commands and properties that you can interact 
-with.
+- /help displays the list of commands and properties that you can interact
+ with.
 
 - /help [command]: shows the doc for that specific command.
 """
@@ -43,7 +43,7 @@ Command List:
 - /people: Returns the names of the people in the chat room
 - /chatroom: Returns the name of the chat room
 - /help: I am not sure what to write here...
-- /help [command]: Shows the docs for the specified command 
+- /help [command]: Shows the docs for the specified command
 - /whois [name]: returns the description of that person
 - /msg [name]: sends a direct message to that person
 - /set [property] [value]: Set the value of a specified property

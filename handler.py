@@ -1,6 +1,6 @@
 from gi.repository import Gtk
 
-import asyncio 
+import asyncio
 import threading
 
 
@@ -8,7 +8,7 @@ class ThreadLoop(threading.Thread):
     def __init__(self, loop):
         threading.Thread.__init__(self)
         self.loop = loop
-        
+
     def run(self):
         print("starting Thread")
         self.loop.run_forever()
