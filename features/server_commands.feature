@@ -40,6 +40,7 @@ Feature: Server Commands
         | /help people        | /people      |
         | /help chatroom      | /chatroom     |
         | /help set           | /set [property] [value]  |
+        | /help nothing       | not a valid | 
         | /set name Marcus     | Marcus |
         | /set name Marcus the great!| Marcus the great!|
         | /set description LOVE| LOVE   |

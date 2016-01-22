@@ -60,7 +60,7 @@ class Handler:
     def send_button_clicked(self, widget):
         print("sending")
         text = self.text_entry.get_text()
-        end_iter = self.text_buf.get_end_iter()
+        # end_iter = self.text_buf.get_end_iter()
         if self.loop.is_running():
             print("loop is running")
             self.transport.write(text.encode())

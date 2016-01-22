@@ -200,7 +200,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
             command_args = msg.split(' ')[:2]
             logging.info("command: {}".format(command_args))
             error_msg = "{} is not a valid command".format(command_args[1])
-            msg = help_text.HELP_DICT.get(command_args[1])
+            msg = help_text.HELP_DICT.get(command_args[1], error_msg)
             self._send_to_self(msg)
 
         elif msg.startswith("/set "):
