@@ -72,6 +72,6 @@
 * terminal: coverage report
 
 ##Helpful References
-* behave website: [add website]
-* GTK+ python docs: [add website]
-* Netcat tutorial: [add website]
+* behave website: http://pythonhosted.org/behave/index.html
+* GTK+ python docs: http://python-gtk-3-tutorial.readthedocs.org/en/latest/index.html
+* Netcat tutorial: http://www.binarytides.com/netcat-tutorial-for-beginners/

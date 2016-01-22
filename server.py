@@ -8,18 +8,50 @@ from random import randint
 clients = []
 
 class SimpleChatClientProtocol(asyncio.Protocol):
+    """
+    This class is the heart of the Chat Server. For each client that
+    connects to the server, an instance of this class is created. These
+    instances are saved in a global list.
+    """
 
     def __init__(self, name):
         self.chatroom_name = name
 
     def _send_msg(self, client, msg):
+        """
+        This method sends messages clients to other clients
+        in the chatroom.
+
+        Args:
+            client (SimpleChatClientProtocol): A chat server client
+            msg (str): message to be sent 
+        """
         client.transport.write("{}: {}\n".format(self.name,
             msg).encode())
 
     def _send_to_self(self, msg):
+        """
+        This method sends messages to self. Typically used for
+        help dialogs and other interactions that are meant only
+        for this client.
+
+        Args:
+            msg (str): message to be sent
+        """
         self.transport.write("{}\n".format(msg).encode())
 
     def _unique_name(self, name):
+        """
+        This method checks to see if the name that was passed
+        in as a parameter is unique among the names of the
+        clients in the chatroom.
+
+        Args:
+            name (str): a potential name
+
+        Return:
+            str or false: Returns False or name, which is Truthy
+        """
         logging.debug("Is the name {} unique?".format(name))
         result = True
         for client in clients:
@@ -31,6 +63,13 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         return result
 
     def connection_made(self, transport):
+        """
+        This method designates what will happen when a client
+        makes a connection to the server.
+
+        Args:
+            transport (socket): The incoming socket from the client
+        """
         self.transport = transport
         self.peername = transport.get_extra_info("peername")
         self.name = "No Name"
@@ -42,10 +81,29 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         self._send_to_self("Welcome to {}!".format(self.chatroom_name))
 
     def send_to_everyone(self, msg):
+        """
+        This method sends a message to everyone in the chatroom.
+
+        Args:
+            msg (str): The message to be sent
+        """
         for client in clients:
             self._send_msg(client, msg)
 
     def find_client_by_name(self, name):
+        """
+        This method attempts to find a client that has a
+        name that matches the name passed into the method.
+        If the client is found, a reference to that client
+        is returned. If the client is not found, then a None
+        object is returned.
+
+        Args:
+            name (str): The name used in the search
+
+        Returns:
+            False or client: False or client, which is truthy
+        """
         found = None
         for client in clients:
             if client.name.strip() == name:
@@ -54,11 +112,28 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         return found
 
 
-    def send_to_list_of_people(self, people):
+    def send_to_list_of_people(self, people, msg):
+        """
+        This method sends a message to a list of people.
+
+        Args:
+            people (list): list of clients
+            msg (str): The message to be sent
+        """
+        # Currently not used. If I dediced to add groups
+        # to the app, then I will use this method.
         for client in people:
             self._send_msg(client, msg)
 
     def data_received(self, data):
+        """
+        This method is in charge of receiving the data that
+        has been sent from the client. The rules for how
+        this data is dealt with exist here.
+
+        Args:
+            data (byte): The data received over the socket connection
+        """
         msg = data.decode().strip()
         logging.debug("data_received: {}".format(msg))
 
@@ -156,11 +231,21 @@ class SimpleChatClientProtocol(asyncio.Protocol):
             self.send_to_everyone(msg)
 
     def connection_lost(self, ex):
+        """
+        This method fires when the connections between
+        the client and server is lost.
+
+        Args:
+            ex (I do not know): I should learn what you are...
+        """
         logging.info("connection_lost: {}".format(self.peername))
         clients.remove(self)
 
 def cli_parser():
-    # logic for argparse
+    """
+    This function contains the logic for the command line
+    parser.
+    """
     chat_server = argparse.ArgumentParser(
         description=help_text.CLI.get('description'),
         epilog=help_text.CLI.get('epilog'))
@@ -186,7 +271,14 @@ def cli_parser():
     return chat_server
 
 def run_server(host, port, name):
-    # runs the server
+    """
+    This function is charge of running the server.
+
+    Args:
+        host (str): host name/ip address
+        port (int): port to which the app will run on
+        name (str): the name of the chatroom
+    """
     logging.info("starting up..")
     print("Server running on {}:{}".format(host, port))
     host = "127.0.0.1" if host == "localhost" else host
@@ -202,6 +294,10 @@ def run_server(host, port, name):
     loop.run_forever()
 
 def main():
+    """
+    This function contains the logic for the logger
+    and is in charge of running this application.
+    """
     logging.basicConfig(
         filename="server_log",
         filemode="w",
@@ -209,8 +305,7 @@ def main():
         format='%(asctime)s--%(levelname)a--%(funcName)s--%(name)s:%(message)s'
     )
     cli_args = cli_parser().parse_args()
-    run_server(cli_args.host, cli_args.port, cli_args.name)
-    
+    run_server(cli_args.host, cli_args.port, cli_args.name)    
 
 
 if __name__ == '__main__':

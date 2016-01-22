@@ -1,4 +1,12 @@
 behave
 coverage
+
 pep8
 flake8
+
+# For Sphinxs
+sphinx
+doctutils
+jinja2
+pygments
+
