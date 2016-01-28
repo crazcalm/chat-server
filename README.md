@@ -6,11 +6,11 @@
     Currently, I am focused on building the chat server.
     Once that has reached a state where I am satified with
     it, I will shift gears and work on the chat client.
+    The chat client will have its own repo.
 
 ##Dependencies
 * python3.4 and up
 * behave
-* GTK+: On Ubuntu install via apt-get for python3
 
 ##Chat commands:
 	All commands start with a "/".
@@ -73,5 +73,4 @@
 
 ##Helpful References
 * behave website: http://pythonhosted.org/behave/index.html
-* GTK+ python docs: http://python-gtk-3-tutorial.readthedocs.org/en/latest/index.html
 * Netcat tutorial: http://www.binarytides.com/netcat-tutorial-for-beginners/
