@@ -18,7 +18,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
     def __init__(self, name):
         self.chatroom_name = name
 
-    def _send_msg(self, client, msg):
+    def _send_msg(self, client, msg, format=True):
         """
         This method sends messages clients to other clients
         in the chatroom.
@@ -27,8 +27,11 @@ class SimpleChatClientProtocol(asyncio.Protocol):
             client (SimpleChatClientProtocol): A chat server client
             msg (str): message to be sent
         """
-        client.transport.write("{}: {}\n".format(self.name,
-                               msg).encode())
+        if format:
+            client.transport.write("{}: {}\n".format(self.name,
+                                   msg).encode())
+        else:
+            client.transport.write("{}\n".format(msg).encode())
 
     def _send_to_self(self, msg):
         """
@@ -81,7 +84,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         clients.append(self)
         self._send_to_self("Welcome to {}!".format(self.chatroom_name))
 
-    def send_to_everyone(self, msg):
+    def send_to_everyone(self, msg, format=True):
         """
         This method sends a message to everyone in the chatroom.
 
@@ -89,7 +92,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
             msg (str): The message to be sent
         """
         for client in clients:
-            self._send_msg(client, msg)
+            self._send_msg(client, msg, format=format)
 
     def find_client_by_name(self, name):
         """
@@ -138,6 +141,8 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         logging.debug("data_received: {}".format(msg))
 
         if msg == "/disconnect":
+            self.send_to_everyone("---> {} left the room".format(self.name),
+                                  format=False)
             self.transport.close()
             logging.info("command: /quit")
 
