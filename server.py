@@ -83,6 +83,8 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         logging.info("connection_made: {}".format(self.peername).encode())
         clients.append(self)
         self._send_to_self("Welcome to {}!".format(self.chatroom_name))
+        self.send_to_everyone("<--- {} joined the room".format(self.name),
+                              format=False)
 
     def send_to_everyone(self, msg, format=True):
         """
