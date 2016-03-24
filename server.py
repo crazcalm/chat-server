@@ -159,6 +159,8 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         elif msg == "/people":
             logging.info("command: /people")
             people = [client for client in clients if client != self]
+            if not people:
+                self._send_to_self("****No one else is in the room....*****")
             for index, client in enumerate(people):
                 self._send_to_self("{}: {}\n".format(index, client.name))
 
