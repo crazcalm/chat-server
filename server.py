@@ -33,7 +33,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         else:
             client.transport.write("{}\n".format(msg).encode())
 
-    def _send_to_self(self, msg):
+    def _send_to_self(self, msg, client=False):
         """
         This method sends messages to self. Typically used for
         help dialogs and other interactions that are meant only
@@ -42,7 +42,10 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         Args:
             msg (str): message to be sent
         """
-        self.transport.write("{}\n".format(msg).encode())
+        if client:
+            self.transport.write("CLIENT**: {}".format(msg).encode())
+        else:
+            self.transport.write("{}\n".format(msg).encode())
 
     def _unique_name(self, name):
         """
@@ -238,6 +241,12 @@ class SimpleChatClientProtocol(asyncio.Protocol):
                         self.description))
             else:
                 self._send_to_self(help_text.HELP_SET)
+
+        elif msg.startswith("/CLIENT**: USER LIST"):
+            logging.debug("/CLIENT**: USER LIST")
+            user_list = [client.name for client in clients]
+            self._send_to_self(",".join(user_list), client=True)
+
         else:
             self.send_to_everyone(msg)
 

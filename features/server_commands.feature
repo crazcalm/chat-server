@@ -64,6 +64,7 @@ Feature: Server Commands
         | /msg M, hi!| msg sent      |
         | /people                 | M             |
         | /set name M | all ready in use |
+        | /CLIENT**: USER LIST | CLIENT**: No Name,M | 
 
     Examples: Commands with wrong arguements
         | command      | response                     |
