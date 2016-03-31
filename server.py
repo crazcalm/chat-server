@@ -4,6 +4,7 @@ import asyncio
 import argparse
 import logging
 from random import randint
+from time import sleep
 
 clients = []
 
@@ -17,21 +18,22 @@ class SimpleChatClientProtocol(asyncio.Protocol):
 
     def __init__(self, name):
         self.chatroom_name = name
+        self.client = False
 
-    def _send_msg(self, client, msg, format=True):
+    def _send_msg(self, person, msg, format=True):
         """
         This method sends messages clients to other clients
         in the chatroom.
 
         Args:
-            client (SimpleChatClientProtocol): A chat server client
+            person (SimpleChatClientProtocol): A chat server client
             msg (str): message to be sent
         """
         if format:
-            client.transport.write("{}: {}\n".format(self.name,
+            person.transport.write("{}: {}\n".format(self.name,
                                    msg).encode())
         else:
-            client.transport.write("{}\n".format(msg).encode())
+            person.transport.write("{}\n".format(msg).encode())
 
     def _send_to_self(self, msg, client=False):
         """
@@ -46,6 +48,11 @@ class SimpleChatClientProtocol(asyncio.Protocol):
             self.transport.write("CLIENT**: {}".format(msg).encode())
         else:
             self.transport.write("{}\n".format(msg).encode())
+
+    def _send_to_clients(self, msg):
+        for person in clients:
+            if person.client:
+                person._send_to_self(msg, client=True)
 
     def _unique_name(self, name):
         """
@@ -90,6 +97,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         self._send_to_self("Your username name is: {}".format(self.name))
         self.send_to_everyone("<--- {} joined the room".format(self.name),
                               format=False)
+        self._send_to_clients(self.client_user_list())
 
     def send_to_everyone(self, msg, format=True):
         """
@@ -132,8 +140,8 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         """
         # Currently not used. If I dediced to add groups
         # to the app, then I will use this method.
-        for client in people:
-            self._send_msg(client, msg)
+        for person in people:
+            self._send_msg(person, msg)
 
     def data_received(self, data):
         """
@@ -152,6 +160,9 @@ class SimpleChatClientProtocol(asyncio.Protocol):
                                   format=False)
             self.transport.close()
             logging.info("command: /quit")
+
+            # Update client lists
+            self._send_to_clients(self.client_user_list())
 
         elif msg == "/whoami":
             logging.info("command: /whoami")
@@ -243,12 +254,25 @@ class SimpleChatClientProtocol(asyncio.Protocol):
                 self._send_to_self(help_text.HELP_SET)
 
         elif msg.startswith("/CLIENT**: USER LIST"):
-            logging.debug("/CLIENT**: USER LIST")
-            user_list = [client.name for client in clients]
-            self._send_to_self(",".join(user_list), client=True)
+            if self.client:
+                logging.debug("/CLIENT**: USER LIST")
+                self._send_to_self(self.client_user_list(), client=True)
+            else:
+                logging.debug("A non-client called: /CLIENT**: USER LIST")
+
+        elif msg.startswith("/CLIENT**: TRUE"):
+            logging.debug("/CLIENT**: TRUE")
+            self.client = True
+            self._send_to_self(self.client_user_list(), client=True)
 
         else:
             self.send_to_everyone(msg)
+
+    def client_user_list(self):
+        sleep(1)
+        logging.debug("method: client_user_list")
+        user_list = [client.name for client in clients]
+        return ",".join(user_list)
 
     def connection_lost(self, ex):
         """
@@ -260,6 +284,9 @@ class SimpleChatClientProtocol(asyncio.Protocol):
         """
         logging.info("connection_lost: {}".format(self.peername))
         clients.remove(self)
+
+        # Update clients
+        self._send_to_clients(self.client_user_list())
 
 
 def cli_parser():
