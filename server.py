@@ -241,6 +241,7 @@ class SimpleChatClientProtocol(asyncio.Protocol):
                         logging.debug('setting name to {}'.format(value))
                         self.name = name
                         self._send_to_self("Name: {}".format(self.name))
+                        self._send_to_clients(self.client_user_list())
                     else:
                         self._send_to_self(
                             "The name you selected is all ready in use."
